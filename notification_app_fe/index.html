@@ -1,0 +1,55 @@
+<!-- notification_app_fe/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notification App FE</title>
+</head>
+<body>
+  <h1>Notification App Frontend</h1>
+  <div>
+    <label>User ID: <input type="text" id="userId" /></label>
+    <button onclick="fetchNotifications()">Get Notifications</button>
+  </div>
+  <div>
+    <label>Student IDs (comma separated): <input type="text" id="studentIds" /></label>
+    <label>Message: <input type="text" id="notifyMessage" /></label>
+    <button onclick="notifyAll()">Notify All</button>
+  </div>
+  <ul id="notifications"></ul>
+  <script>
+    async function fetchNotifications() {
+      const userId = document.getElementById('userId').value;
+      if (!userId) {
+        alert('Please enter a User ID.');
+        return;
+      }
+      const res = await fetch('http://localhost:3001/api/notifications/' + encodeURIComponent(userId));
+      const data = await res.json();
+      const list = document.getElementById('notifications');
+      list.innerHTML = '';
+      data.notifications.forEach(n => {
+        const li = document.createElement('li');
+        li.textContent = `${n.type}: ${n.message} (${n.timestamp}) [${n.is_read ? 'Read' : 'Unread'}]`;
+        list.appendChild(li);
+      });
+    }
+    async function notifyAll() {
+      const ids = document.getElementById('studentIds').value.split(',').map(s => s.trim()).filter(Boolean);
+      const message = document.getElementById('notifyMessage').value;
+      if (!ids.length || !message) {
+        alert('Enter student IDs and a message.');
+        return;
+      }
+      const res = await fetch('http://localhost:3001/api/notifications/notify_all', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ student_ids: ids, message })
+      });
+      const data = await res.json();
+      alert(`Notified ${data.notified} students!`);
+    }
+  </script>
+</body>
+</html>
