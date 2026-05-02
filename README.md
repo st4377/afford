@@ -1,4 +1,4 @@
-# Affordmed Campus Hiring Evaluation – Backend Track
+# Affordmed – Backend Track
 
 ## Overview
 This project is a submission for the Affordmed Campus Hiring Evaluation (Backend Track). It demonstrates a robust notification system with logging middleware, backend and frontend microservices, and a complete system design as per the provided requirements.
